@@ -1,0 +1,920 @@
+{
+  "description": "企业场景演示样本（含来源档案、批次号、定价建议），预测由真实模型推理得出",
+  "sources": {
+    "第一奶站": "S1",
+    "第二奶站": "S2",
+    "绿源牧场": "S3",
+    "康达合作社": "S4",
+    "润发牧场": "S5"
+  },
+  "pricing_policy": {
+    "base_price": 4.0,
+    "factors": {
+      "high": 1.15,
+      "medium": 1.0,
+      "low": 0.75
+    }
+  },
+  "samples": [
+    {
+      "id": 1,
+      "scenario": "优质",
+      "source": "第一奶站",
+      "batch": "B1021-A01",
+      "input": {
+        "ph": 6.62,
+        "temperature": 35.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 254
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 1.0,
+        "probabilities": {
+          "low": 6.764247245882871e-06,
+          "medium": 3.454646559930552e-07,
+          "high": 0.999992847442627
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 2,
+      "scenario": "优质",
+      "source": "第一奶站",
+      "batch": "B1021-A01",
+      "input": {
+        "ph": 6.6,
+        "temperature": 36.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 1.0,
+        "probabilities": {
+          "low": 1.628126119612716e-05,
+          "medium": 1.0127827181349858e-06,
+          "high": 0.9999827146530151
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 3,
+      "scenario": "优质",
+      "source": "第一奶站",
+      "batch": "B1021-A02",
+      "input": {
+        "ph": 6.65,
+        "temperature": 34.5,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 253
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 1.0,
+        "probabilities": {
+          "low": 8.229135346482508e-06,
+          "medium": 4.202796333174774e-07,
+          "high": 0.9999912977218628
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 4,
+      "scenario": "优质",
+      "source": "绿源牧场",
+      "batch": "B1021-B01",
+      "input": {
+        "ph": 6.58,
+        "temperature": 37.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 252
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9884,
+        "probabilities": {
+          "low": 0.011492978781461716,
+          "medium": 6.150774424895644e-05,
+          "high": 0.988445520401001
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 5,
+      "scenario": "优质",
+      "source": "绿源牧场",
+      "batch": "B1021-B01",
+      "input": {
+        "ph": 6.7,
+        "temperature": 35.5,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9998,
+        "probabilities": {
+          "low": 0.00022651984181720763,
+          "medium": 1.446218720957404e-05,
+          "high": 0.9997590184211731
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 6,
+      "scenario": "优质",
+      "source": "绿源牧场",
+      "batch": "B1021-B02",
+      "input": {
+        "ph": 6.55,
+        "temperature": 36.5,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 251
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9901,
+        "probabilities": {
+          "low": 0.009802830405533314,
+          "medium": 5.246245927992277e-05,
+          "high": 0.9901447296142578
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 7,
+      "scenario": "优质",
+      "source": "润发牧场",
+      "batch": "B1021-C01",
+      "input": {
+        "ph": 6.63,
+        "temperature": 34.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 254
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 1.0,
+        "probabilities": {
+          "low": 8.229135346482508e-06,
+          "medium": 4.202796333174774e-07,
+          "high": 0.9999912977218628
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 8,
+      "scenario": "优质",
+      "source": "润发牧场",
+      "batch": "B1021-C01",
+      "input": {
+        "ph": 6.68,
+        "temperature": 35.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 250
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 1.0,
+        "probabilities": {
+          "low": 2.0050672901561484e-05,
+          "medium": 4.806237825505377e-07,
+          "high": 0.9999794960021973
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 9,
+      "scenario": "优质",
+      "source": "康达合作社",
+      "batch": "B1021-D01",
+      "input": {
+        "ph": 6.6,
+        "temperature": 38.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 252
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 1.0,
+        "probabilities": {
+          "low": 1.6450267139589414e-05,
+          "medium": 4.910172606287233e-07,
+          "high": 0.9999830722808838
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 10,
+      "scenario": "优质",
+      "source": "康达合作社",
+      "batch": "B1021-D01",
+      "input": {
+        "ph": 6.52,
+        "temperature": 36.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 253
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9984,
+        "probabilities": {
+          "low": 0.0015797155210748315,
+          "medium": 3.8764184864703566e-05,
+          "high": 0.998381495475769
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 11,
+      "scenario": "优质",
+      "source": "第一奶站",
+      "batch": "B1021-A03",
+      "input": {
+        "ph": 6.66,
+        "temperature": 34.8,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 254
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 1.0,
+        "probabilities": {
+          "low": 8.229135346482508e-06,
+          "medium": 4.202796333174774e-07,
+          "high": 0.9999912977218628
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 12,
+      "scenario": "优质",
+      "source": "绿源牧场",
+      "batch": "B1021-B03",
+      "input": {
+        "ph": 6.57,
+        "temperature": 37.2,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 252
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9884,
+        "probabilities": {
+          "low": 0.011492978781461716,
+          "medium": 6.150774424895644e-05,
+          "high": 0.988445520401001
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 13,
+      "scenario": "优质",
+      "source": "第二奶站",
+      "batch": "B1021-E01",
+      "input": {
+        "ph": 6.5,
+        "temperature": 42.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 250
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.927,
+        "probabilities": {
+          "low": 0.07277705520391464,
+          "medium": 0.00018226286920253187,
+          "high": 0.9270406365394592
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 14,
+      "scenario": "优质",
+      "source": "第二奶站",
+      "batch": "B1021-E01",
+      "input": {
+        "ph": 6.75,
+        "temperature": 40.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 251
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9917,
+        "probabilities": {
+          "low": 0.008151364512741566,
+          "medium": 0.00015168989193625748,
+          "high": 0.9916969537734985
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 15,
+      "scenario": "优质",
+      "source": "第二奶站",
+      "batch": "B1021-E02",
+      "input": {
+        "ph": 6.6,
+        "temperature": 45.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 252
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9999,
+        "probabilities": {
+          "low": 0.00011766482202801853,
+          "medium": 8.317384526890237e-06,
+          "high": 0.9998739957809448
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 16,
+      "scenario": "劣质/异常",
+      "source": "康达合作社",
+      "batch": "B1021-D02",
+      "input": {
+        "ph": 6.45,
+        "temperature": 38.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 250
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9429,
+        "probabilities": {
+          "low": 0.942880392074585,
+          "medium": 5.328213592292741e-05,
+          "high": 0.05706629157066345
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 17,
+      "scenario": "优质",
+      "source": "康达合作社",
+      "batch": "B1021-D02",
+      "input": {
+        "ph": 6.8,
+        "temperature": 39.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 249
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9956,
+        "probabilities": {
+          "low": 0.0043772803619503975,
+          "medium": 1.130036707763793e-05,
+          "high": 0.9956114888191223
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 18,
+      "scenario": "优质",
+      "source": "第二奶站",
+      "batch": "B1021-E03",
+      "input": {
+        "ph": 6.55,
+        "temperature": 46.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 251
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9816,
+        "probabilities": {
+          "low": 0.018164396286010742,
+          "medium": 0.000218420012970455,
+          "high": 0.9816172122955322
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 19,
+      "scenario": "优质",
+      "source": "润发牧场",
+      "batch": "B1021-C02",
+      "input": {
+        "ph": 6.7,
+        "temperature": 43.5,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 252
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.9942,
+        "probabilities": {
+          "low": 0.005735872779041529,
+          "medium": 8.72230448294431e-05,
+          "high": 0.9941768646240234
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 20,
+      "scenario": "劣质/异常",
+      "source": "润发牧场",
+      "batch": "B1021-C02",
+      "input": {
+        "ph": 6.4,
+        "temperature": 41.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 250
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.992,
+        "probabilities": {
+          "low": 0.9919816851615906,
+          "medium": 3.0878480174578726e-05,
+          "high": 0.007987369783222675
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 21,
+      "scenario": "劣质/异常",
+      "source": "第二奶站",
+      "batch": "B1021-E04",
+      "input": {
+        "ph": 7.2,
+        "temperature": 65.0,
+        "taste": 1,
+        "odor": 0,
+        "fat": 1,
+        "turbidity": 0,
+        "colour": 245
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9943,
+        "probabilities": {
+          "low": 0.9943352341651917,
+          "medium": 0.004083859734237194,
+          "high": 0.0015808648895472288
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 22,
+      "scenario": "劣质/异常",
+      "source": "康达合作社",
+      "batch": "B1021-D03",
+      "input": {
+        "ph": 5.5,
+        "temperature": 40.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 0,
+        "turbidity": 1,
+        "colour": 248
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9999,
+        "probabilities": {
+          "low": 0.9998973608016968,
+          "medium": 9.840902202995494e-05,
+          "high": 4.221254130243324e-06
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 23,
+      "scenario": "劣质/异常",
+      "source": "第二奶站",
+      "batch": "B1021-E05",
+      "input": {
+        "ph": 3.0,
+        "temperature": 90.0,
+        "taste": 0,
+        "odor": 0,
+        "fat": 0,
+        "turbidity": 0,
+        "colour": 240
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9983,
+        "probabilities": {
+          "low": 0.9983219504356384,
+          "medium": 0.0016779523575678468,
+          "high": 2.7260979251764184e-08
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 24,
+      "scenario": "劣质/异常",
+      "source": "康达合作社",
+      "batch": "B1021-D04",
+      "input": {
+        "ph": 6.0,
+        "temperature": 45.0,
+        "taste": 0,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 0,
+        "colour": 245
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.8561,
+        "probabilities": {
+          "low": 0.8560774326324463,
+          "medium": 0.1436057686805725,
+          "high": 0.0003167696704622358
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 25,
+      "scenario": "劣质/异常",
+      "source": "润发牧场",
+      "batch": "B1021-C03",
+      "input": {
+        "ph": 6.6,
+        "temperature": 99.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.5485,
+        "probabilities": {
+          "low": 0.5484967827796936,
+          "medium": 2.054545439023059e-05,
+          "high": 0.4514826834201813
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 26,
+      "scenario": "劣质/异常",
+      "source": "润发牧场",
+      "batch": "B1021-C04",
+      "input": {
+        "ph": 0.5,
+        "temperature": 35.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9869,
+        "probabilities": {
+          "low": 0.986912727355957,
+          "medium": 2.5342505978187546e-05,
+          "high": 0.013061992824077606
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 27,
+      "scenario": "优质",
+      "source": "绿源牧场",
+      "batch": "B1021-B04",
+      "input": {
+        "ph": 6.6,
+        "temperature": 35.0,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 1
+      },
+      "result": {
+        "grade": "high",
+        "confidence": 0.982,
+        "probabilities": {
+          "low": 0.0067918673157691956,
+          "medium": 0.011234290897846222,
+          "high": 0.9819738864898682
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 1.15,
+        "suggested_price": 4.6,
+        "advice": "优质奶源，建议按优质优价机制优先收购"
+      }
+    },
+    {
+      "id": 28,
+      "scenario": "劣质/异常",
+      "source": "第二奶站",
+      "batch": "B1021-E06",
+      "input": {
+        "ph": 6.8,
+        "temperature": 52.0,
+        "taste": 1,
+        "odor": 0,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 246
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9981,
+        "probabilities": {
+          "low": 0.9981284737586975,
+          "medium": 0.00023411668371409178,
+          "high": 0.0016374753322452307
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 29,
+      "scenario": "劣质/异常",
+      "source": "第二奶站",
+      "batch": "B1021-E07",
+      "input": {
+        "ph": 4.0,
+        "temperature": 70.0,
+        "taste": 0,
+        "odor": 0,
+        "fat": 0,
+        "turbidity": 0,
+        "colour": 242
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9983,
+        "probabilities": {
+          "low": 0.9983219504356384,
+          "medium": 0.0016779523575678468,
+          "high": 2.7260979251764184e-08
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    },
+    {
+      "id": 30,
+      "scenario": "劣质/异常",
+      "source": "康达合作社",
+      "batch": "B1021-D05",
+      "input": {
+        "ph": 3.5,
+        "temperature": 60.0,
+        "taste": 0,
+        "odor": 1,
+        "fat": 0,
+        "turbidity": 0,
+        "colour": 241
+      },
+      "result": {
+        "grade": "low",
+        "confidence": 0.9995,
+        "probabilities": {
+          "low": 0.9994692206382751,
+          "medium": 0.0005306366365402937,
+          "high": 1.9849015586714813e-07
+        }
+      },
+      "pricing": {
+        "base_price": 4.0,
+        "factor": 0.75,
+        "suggested_price": 3.0,
+        "advice": "品质不达标，建议拒收或折价处理，并追溯来源"
+      }
+    }
+  ]
+}

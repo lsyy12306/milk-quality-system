@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=http://localhost:8000">
+    <title>打开牛奶品质分级系统</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f2f5;
+        }
+        .box {
+            background: white;
+            padding: 40px 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 { color: #1890ff; margin-bottom: 16px; }
+        p { color: #666; margin-bottom: 24px; }
+        a {
+            display: inline-block;
+            background: #1890ff;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        a:hover { background: #40a9ff; }
+        .note {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>牛奶品质分级系统</h1>
+        <p>点击下面按钮打开产品页面（已自动跳转，无需等待）</p>
+        <a href="http://localhost:8000">立即打开产品</a>
+        <p class="note">若未自动打开，请先双击运行根目录的「启动后端.bat」，再点此按钮（单入口，无需启动前端）</p>
+    </div>
+</body>
+</html>

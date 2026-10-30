@@ -1,0 +1,168 @@
+{
+  "trained_at": "2026-10-15T11:02:08",
+  "model_type": "XGBoost (sklearn Pipeline: StandardScaler + XGBClassifier)",
+  "features": [
+    "pH",
+    "Temperature",
+    "Colour",
+    "Taste",
+    "Odor",
+    "Fat",
+    "Turbidity"
+  ],
+  "continuous_features": [
+    "pH",
+    "Temperature",
+    "Colour"
+  ],
+  "binary_features": [
+    "Taste",
+    "Odor",
+    "Fat",
+    "Turbidity"
+  ],
+  "class_order": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "best_params": {
+    "colsample_bytree": 0.8,
+    "learning_rate": 0.2,
+    "max_depth": 3,
+    "n_estimators": 300,
+    "subsample": 0.8
+  },
+  "cv_macro_f1": 0.9976,
+  "test_accuracy": 1.0,
+  "test_macro_f1": 1.0,
+  "test_f1_per_class": {
+    "low": 1.0,
+    "medium": 1.0,
+    "high": 1.0
+  },
+  "feature_importance": {
+    "Turbidity": 0.274,
+    "pH": 0.2004,
+    "Fat": 0.1768,
+    "Temperature": 0.1492,
+    "Odor": 0.0835,
+    "Taste": 0.0726,
+    "Colour": 0.0435
+  },
+  "n_samples": 1059,
+  "correlation": {
+    "features": [
+      "pH",
+      "Temperature",
+      "Taste",
+      "Odor",
+      "Fat",
+      "Turbidity",
+      "Colour",
+      "Grade"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.2447,
+        -0.0641,
+        -0.0813,
+        -0.0934,
+        0.0484,
+        -0.1646,
+        0.029
+      ],
+      [
+        0.2447,
+        1.0,
+        -0.1098,
+        -0.0489,
+        0.0241,
+        0.1851,
+        -0.0085,
+        -0.4178
+      ],
+      [
+        -0.0641,
+        -0.1098,
+        1.0,
+        0.0176,
+        0.3241,
+        0.0558,
+        -0.0827,
+        0.0255
+      ],
+      [
+        -0.0813,
+        -0.0489,
+        0.0176,
+        1.0,
+        0.3145,
+        0.4579,
+        -0.0394,
+        0.1496
+      ],
+      [
+        -0.0934,
+        0.0241,
+        0.3241,
+        0.3145,
+        1.0,
+        0.3293,
+        0.1142,
+        0.151
+      ],
+      [
+        0.0484,
+        0.1851,
+        0.0558,
+        0.4579,
+        0.3293,
+        1.0,
+        0.1364,
+        -0.1536
+      ],
+      [
+        -0.1646,
+        -0.0085,
+        -0.0827,
+        -0.0394,
+        0.1142,
+        0.1364,
+        1.0,
+        -0.057
+      ],
+      [
+        0.029,
+        -0.4178,
+        0.0255,
+        0.1496,
+        0.151,
+        -0.1536,
+        -0.057,
+        1.0
+      ]
+    ]
+  },
+  "baseline_comparison": {
+    "note": "同一测试集（10%，stratified split, random_state=42）上的对比",
+    "results": [
+      {
+        "model": "决策树 (DecisionTree)",
+        "accuracy": 0.9434,
+        "macro_f1": 0.938
+      },
+      {
+        "model": "随机森林 (RandomForest)",
+        "accuracy": 0.9906,
+        "macro_f1": 0.9895
+      },
+      {
+        "model": "XGBoost（本系统）",
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      }
+    ]
+  }
+}

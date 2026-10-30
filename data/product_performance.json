@@ -1,0 +1,353 @@
+{
+  "generated_at": "2026-10-20 15:43:43",
+  "summary": {
+    "total_samples": 15,
+    "successful_predictions": 15,
+    "failed_predictions": 0,
+    "grade_distribution": {
+      "high": 5,
+      "low": 10
+    },
+    "timing": {
+      "avg_ms": 16.98,
+      "min_ms": 9.51,
+      "max_ms": 98.89
+    },
+    "endpoint_tests": [
+      {
+        "name": "指标字典",
+        "url": "http://127.0.0.1:8000/api/indicators",
+        "time_ms": 4.51,
+        "status": "ok"
+      },
+      {
+        "name": "模型信息",
+        "url": "http://127.0.0.1:8000/api/model/info",
+        "time_ms": 2.0,
+        "status": "ok"
+      }
+    ],
+    "csv_batch": {
+      "status": "ok",
+      "time_ms": 127.6,
+      "count": 20
+    }
+  },
+  "predictions": [
+    {
+      "name": "优质-标准",
+      "inputs": {
+        "ph": 6.6,
+        "temperature": 35,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "grade": "high",
+      "confidence": 100.0,
+      "probs": {
+        "low": 0.0,
+        "medium": 0.0,
+        "high": 100.0
+      },
+      "time_ms": 98.89,
+      "status": "ok"
+    },
+    {
+      "name": "优质-边缘",
+      "inputs": {
+        "ph": 6.5,
+        "temperature": 38,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 252
+      },
+      "grade": "high",
+      "confidence": 98.78,
+      "probs": {
+        "low": 1.21,
+        "medium": 0.01,
+        "high": 98.78
+      },
+      "time_ms": 11.76,
+      "status": "ok"
+    },
+    {
+      "name": "优质-低温",
+      "inputs": {
+        "ph": 6.7,
+        "temperature": 34,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "grade": "high",
+      "confidence": 99.97,
+      "probs": {
+        "low": 0.03,
+        "medium": 0.0,
+        "high": 99.97
+      },
+      "time_ms": 11.52,
+      "status": "ok"
+    },
+    {
+      "name": "一般-混合A",
+      "inputs": {
+        "ph": 6.5,
+        "temperature": 50,
+        "taste": 1,
+        "odor": 0,
+        "fat": 1,
+        "turbidity": 0,
+        "colour": 250
+      },
+      "grade": "low",
+      "confidence": 99.93,
+      "probs": {
+        "low": 99.93,
+        "medium": 0.06,
+        "high": 0.01
+      },
+      "time_ms": 11.02,
+      "status": "ok"
+    },
+    {
+      "name": "一般-混合B",
+      "inputs": {
+        "ph": 5.5,
+        "temperature": 40,
+        "taste": 1,
+        "odor": 1,
+        "fat": 0,
+        "turbidity": 1,
+        "colour": 248
+      },
+      "grade": "low",
+      "confidence": 99.99,
+      "probs": {
+        "low": 99.99,
+        "medium": 0.01,
+        "high": 0.0
+      },
+      "time_ms": 11.51,
+      "status": "ok"
+    },
+    {
+      "name": "一般-居中",
+      "inputs": {
+        "ph": 6.0,
+        "temperature": 45,
+        "taste": 0,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 0,
+        "colour": 245
+      },
+      "grade": "low",
+      "confidence": 85.61,
+      "probs": {
+        "low": 85.61,
+        "medium": 14.36,
+        "high": 0.03
+      },
+      "time_ms": 9.51,
+      "status": "ok"
+    },
+    {
+      "name": "劣质-标准",
+      "inputs": {
+        "ph": 3.0,
+        "temperature": 90,
+        "taste": 0,
+        "odor": 0,
+        "fat": 0,
+        "turbidity": 0,
+        "colour": 240
+      },
+      "grade": "low",
+      "confidence": 99.83,
+      "probs": {
+        "low": 99.83,
+        "medium": 0.17,
+        "high": 0.0
+      },
+      "time_ms": 12.01,
+      "status": "ok"
+    },
+    {
+      "name": "劣质-边缘",
+      "inputs": {
+        "ph": 4.0,
+        "temperature": 70,
+        "taste": 0,
+        "odor": 0,
+        "fat": 0,
+        "turbidity": 0,
+        "colour": 242
+      },
+      "grade": "low",
+      "confidence": 99.83,
+      "probs": {
+        "low": 99.83,
+        "medium": 0.17,
+        "high": 0.0
+      },
+      "time_ms": 10.51,
+      "status": "ok"
+    },
+    {
+      "name": "劣质-酸败",
+      "inputs": {
+        "ph": 3.5,
+        "temperature": 60,
+        "taste": 0,
+        "odor": 0,
+        "fat": 1,
+        "turbidity": 0,
+        "colour": 241
+      },
+      "grade": "low",
+      "confidence": 99.88,
+      "probs": {
+        "low": 99.88,
+        "medium": 0.12,
+        "high": 0.0
+      },
+      "time_ms": 10.51,
+      "status": "ok"
+    },
+    {
+      "name": "边界-pH极端低",
+      "inputs": {
+        "ph": 0.5,
+        "temperature": 35,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "grade": "low",
+      "confidence": 98.69,
+      "probs": {
+        "low": 98.69,
+        "medium": 0.0,
+        "high": 1.31
+      },
+      "time_ms": 11.52,
+      "status": "ok"
+    },
+    {
+      "name": "边界-温度极端高",
+      "inputs": {
+        "ph": 6.6,
+        "temperature": 99,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 255
+      },
+      "grade": "low",
+      "confidence": 54.85,
+      "probs": {
+        "low": 54.85,
+        "medium": 0.0,
+        "high": 45.15
+      },
+      "time_ms": 10.51,
+      "status": "ok"
+    },
+    {
+      "name": "边界-颜色极端",
+      "inputs": {
+        "ph": 6.6,
+        "temperature": 35,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 1
+      },
+      "grade": "high",
+      "confidence": 98.2,
+      "probs": {
+        "low": 0.68,
+        "medium": 1.12,
+        "high": 98.2
+      },
+      "time_ms": 11.51,
+      "status": "ok"
+    },
+    {
+      "name": "边界-全指标中间",
+      "inputs": {
+        "ph": 5.0,
+        "temperature": 55,
+        "taste": 0,
+        "odor": 0,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 248
+      },
+      "grade": "low",
+      "confidence": 100.0,
+      "probs": {
+        "low": 100.0,
+        "medium": 0.0,
+        "high": 0.0
+      },
+      "time_ms": 11.74,
+      "status": "ok"
+    },
+    {
+      "name": "真实-典型好奶",
+      "inputs": {
+        "ph": 6.62,
+        "temperature": 38,
+        "taste": 1,
+        "odor": 1,
+        "fat": 1,
+        "turbidity": 1,
+        "colour": 254
+      },
+      "grade": "high",
+      "confidence": 100.0,
+      "probs": {
+        "low": 0.0,
+        "medium": 0.0,
+        "high": 100.0
+      },
+      "time_ms": 10.51,
+      "status": "ok"
+    },
+    {
+      "name": "真实-典型差奶",
+      "inputs": {
+        "ph": 3.25,
+        "temperature": 85,
+        "taste": 0,
+        "odor": 0,
+        "fat": 0,
+        "turbidity": 0,
+        "colour": 241
+      },
+      "grade": "low",
+      "confidence": 99.83,
+      "probs": {
+        "low": 99.83,
+        "medium": 0.17,
+        "high": 0.0
+      },
+      "time_ms": 11.61,
+      "status": "ok"
+    }
+  ]
+}

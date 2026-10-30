@@ -1,0 +1,302 @@
+[
+  {
+    "name": "优质-标准",
+    "ph": 6.6,
+    "temperature": 35,
+    "taste": 1,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 255,
+    "desc": "全部指标理想",
+    "predicted_grade": "high",
+    "confidence": 0.9999775886535645,
+    "probabilities": {
+      "low": 2.1079198631923646e-05,
+      "medium": 1.3112390888636583e-06,
+      "high": 0.9999775886535645
+    },
+    "status": "ok",
+    "confidence_pct": 100.0
+  },
+  {
+    "name": "优质-边缘",
+    "ph": 6.5,
+    "temperature": 38,
+    "taste": 1,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 252,
+    "desc": "pH/温度轻微偏离",
+    "predicted_grade": "high",
+    "confidence": 0.9877788424491882,
+    "probabilities": {
+      "low": 0.012140214443206787,
+      "medium": 8.090420305961743e-05,
+      "high": 0.9877788424491882
+    },
+    "status": "ok",
+    "confidence_pct": 98.78
+  },
+  {
+    "name": "优质-低温",
+    "ph": 6.7,
+    "temperature": 34,
+    "taste": 1,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 255,
+    "desc": "温度接近下限",
+    "predicted_grade": "high",
+    "confidence": 0.9997068047523499,
+    "probabilities": {
+      "low": 0.000275561265880242,
+      "medium": 1.759324368322268e-05,
+      "high": 0.9997068047523499
+    },
+    "status": "ok",
+    "confidence_pct": 99.97
+  },
+  {
+    "name": "一般-混合A",
+    "ph": 6.5,
+    "temperature": 50,
+    "taste": 1,
+    "odor": 0,
+    "fat": 1,
+    "turbidity": 0,
+    "colour": 250,
+    "desc": "温度偏高+气味差+浑浊度低",
+    "predicted_grade": "low",
+    "confidence": 0.9992668032646179,
+    "probabilities": {
+      "low": 0.9992668032646179,
+      "medium": 0.0006122380145825446,
+      "high": 0.00012094817793695256
+    },
+    "status": "ok",
+    "confidence_pct": 99.93
+  },
+  {
+    "name": "一般-混合B",
+    "ph": 5.5,
+    "temperature": 40,
+    "taste": 1,
+    "odor": 1,
+    "fat": 0,
+    "turbidity": 1,
+    "colour": 248,
+    "desc": "pH偏低+脂肪低",
+    "predicted_grade": "low",
+    "confidence": 0.9998973608016968,
+    "probabilities": {
+      "low": 0.9998973608016968,
+      "medium": 9.840902202995494e-05,
+      "high": 4.221254130243324e-06
+    },
+    "status": "ok",
+    "confidence_pct": 99.99
+  },
+  {
+    "name": "一般-居中",
+    "ph": 6.0,
+    "temperature": 45,
+    "taste": 0,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 0,
+    "colour": 245,
+    "desc": "多指标中等",
+    "predicted_grade": "low",
+    "confidence": 0.8560774326324463,
+    "probabilities": {
+      "low": 0.8560774326324463,
+      "medium": 0.1436057686805725,
+      "high": 0.0003167696704622358
+    },
+    "status": "ok",
+    "confidence_pct": 85.61
+  },
+  {
+    "name": "劣质-标准",
+    "ph": 3.0,
+    "temperature": 90,
+    "taste": 0,
+    "odor": 0,
+    "fat": 0,
+    "turbidity": 0,
+    "colour": 240,
+    "desc": "全部指标差",
+    "predicted_grade": "low",
+    "confidence": 0.9983219504356384,
+    "probabilities": {
+      "low": 0.9983219504356384,
+      "medium": 0.0016779523575678468,
+      "high": 2.7260979251764184e-08
+    },
+    "status": "ok",
+    "confidence_pct": 99.83
+  },
+  {
+    "name": "劣质-边缘",
+    "ph": 4.0,
+    "temperature": 70,
+    "taste": 0,
+    "odor": 0,
+    "fat": 0,
+    "turbidity": 0,
+    "colour": 242,
+    "desc": "稍好于全差",
+    "predicted_grade": "low",
+    "confidence": 0.9983219504356384,
+    "probabilities": {
+      "low": 0.9983219504356384,
+      "medium": 0.0016779523575678468,
+      "high": 2.7260979251764184e-08
+    },
+    "status": "ok",
+    "confidence_pct": 99.83
+  },
+  {
+    "name": "劣质-酸败",
+    "ph": 3.5,
+    "temperature": 60,
+    "taste": 0,
+    "odor": 0,
+    "fat": 1,
+    "turbidity": 0,
+    "colour": 241,
+    "desc": "pH极低+口感气味差",
+    "predicted_grade": "low",
+    "confidence": 0.9988498687744141,
+    "probabilities": {
+      "low": 0.9988498687744141,
+      "medium": 0.001150038093328476,
+      "high": 9.116777732742776e-08
+    },
+    "status": "ok",
+    "confidence_pct": 99.88
+  },
+  {
+    "name": "边界-pH极端低",
+    "ph": 0.5,
+    "temperature": 35,
+    "taste": 1,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 255,
+    "desc": "pH极低但其他好",
+    "predicted_grade": "low",
+    "confidence": 0.986912727355957,
+    "probabilities": {
+      "low": 0.986912727355957,
+      "medium": 2.5342505978187546e-05,
+      "high": 0.013061992824077606
+    },
+    "status": "ok",
+    "confidence_pct": 98.69
+  },
+  {
+    "name": "边界-温度极端高",
+    "ph": 6.6,
+    "temperature": 99,
+    "taste": 1,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 255,
+    "desc": "温度极高但其他好",
+    "predicted_grade": "low",
+    "confidence": 0.5484967827796936,
+    "probabilities": {
+      "low": 0.5484967827796936,
+      "medium": 2.054545439023059e-05,
+      "high": 0.4514826834201813
+    },
+    "status": "ok",
+    "confidence_pct": 54.85
+  },
+  {
+    "name": "边界-颜色极端",
+    "ph": 6.6,
+    "temperature": 35,
+    "taste": 1,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 1,
+    "desc": "颜色极低但其他好",
+    "predicted_grade": "high",
+    "confidence": 0.9819738864898682,
+    "probabilities": {
+      "low": 0.0067918673157691956,
+      "medium": 0.011234290897846222,
+      "high": 0.9819738864898682
+    },
+    "status": "ok",
+    "confidence_pct": 98.2
+  },
+  {
+    "name": "边界-全指标中间",
+    "ph": 5.0,
+    "temperature": 55,
+    "taste": 0,
+    "odor": 0,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 248,
+    "desc": "好坏参半",
+    "predicted_grade": "low",
+    "confidence": 0.9999843835830688,
+    "probabilities": {
+      "low": 0.9999843835830688,
+      "medium": 1.5550151147181168e-05,
+      "high": 9.990237970214366e-08
+    },
+    "status": "ok",
+    "confidence_pct": 100.0
+  },
+  {
+    "name": "真实-典型好奶",
+    "ph": 6.62,
+    "temperature": 38,
+    "taste": 1,
+    "odor": 1,
+    "fat": 1,
+    "turbidity": 1,
+    "colour": 254,
+    "desc": "接近数据集 high 中位数",
+    "predicted_grade": "high",
+    "confidence": 0.9999940395355225,
+    "probabilities": {
+      "low": 5.54960934096016e-06,
+      "medium": 3.529344780872634e-07,
+      "high": 0.9999940395355225
+    },
+    "status": "ok",
+    "confidence_pct": 100.0
+  },
+  {
+    "name": "真实-典型差奶",
+    "ph": 3.25,
+    "temperature": 85,
+    "taste": 0,
+    "odor": 0,
+    "fat": 0,
+    "turbidity": 0,
+    "colour": 241,
+    "desc": "接近数据集 low 中位数",
+    "predicted_grade": "low",
+    "confidence": 0.9983219504356384,
+    "probabilities": {
+      "low": 0.9983219504356384,
+      "medium": 0.0016779523575678468,
+      "high": 2.7260979251764184e-08
+    },
+    "status": "ok",
+    "confidence_pct": 99.83
+  }
+]

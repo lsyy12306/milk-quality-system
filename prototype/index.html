@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>牛奶品质分级系统 - 高保真原型 v3</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#007AFF',
+        'primary-dark': '#0056D3',
+        'bg-page': '#F5F5F7',
+        'bg-card': '#FFFFFF',
+        border: '#E5E5EA',
+        'text-primary': '#1D1D1F',
+        'text-secondary': '#6E6E73',
+        'text-tertiary': '#AEAEB2',
+        success: '#34C759',
+        warning: '#FF9500',
+        error: '#FF3B30',
+      },
+      fontFamily: {
+        sans: ['"PingFang SC"', '"SF Pro"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', '"Microsoft YaHei"', 'sans-serif'],
+      },
+    }
+  }
+}
+</script>
+<style>
+body { font-family: 'PingFang SC', 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+.sider-item:hover { background: #F5F5F7; }
+.sider-item.active { color: #007AFF; background: rgba(0,122,255,0.06); border-left: 3px solid #007AFF; }
+.tab-btn.active { color: #007AFF; border-bottom: 2px solid #007AFF; }
+.tab-btn { color: #6E6E73; border-bottom: 2px solid transparent; }
+.tab-btn:hover { color: #1D1D1F; }
+input[type="number"], select { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.progress-bar { transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.result-card { animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.btn-primary { transition: all 0.15s ease; }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.card-hover { transition: all 0.2s ease; }
+.card-hover:hover { border-color: #D1D1D6; transform: translateY(-1px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(0,122,255,0.12); border-color: #007AFF; }
+input.error, select.error { border-color: #FF3B30; box-shadow: 0 0 0 3px rgba(255,59,48,0.12); }
+/* Drawer */
+.drawer { transform: translateX(-100%); transition: transform 0.3s ease; }
+.drawer.open { transform: translateX(0); }
+.drawer-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.drawer-overlay.open { opacity: 1; pointer-events: auto; }
+/* Toast */
+.toast-container { position: fixed; top: 80px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: 10px; background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 1px solid #E5E5EA;
+  font-size: 14px; min-width: 260px; max-width: 400px;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+}
+.toast.success { border-left: 3px solid #34C759; }
+.toast.error { border-left: 3px solid #FF3B30; }
+.toast.warning { border-left: 3px solid #FF9500; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+/* Skeleton */
+.skeleton { background: linear-gradient(90deg, #F2F2F7 25%, #E5E5EA 50%, #F2F2F7 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+/* Mobile */
+@media (max-width: 767px) {
+  .content-area { margin-left: 0 !important; }
+  .sider-desktop { display: none !important; }
+  .header-hamburger { display: flex !important; }
+}
+@media (min-width: 768px) {
+  .header-hamburger { display: none !important; }
+  .sider-mobile { display: none !important; }
+}
+/* Score breakdown bar */
+.score-bar { height: 6px; border-radius: 3px; background: #F2F2F7; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+/* Radio button cards */
+.radio-card { transition: all 0.15s ease; }
+.radio-card:hover { border-color: #007AFF; }
+.radio-card.selected { border-color: #007AFF; background: rgba(0,122,255,0.04); }
+</style>
+</head>
+<body class="bg-bg-page text-text-primary">
+
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Drawer Overlay -->
+<div id="drawerOverlay" class="drawer-overlay fixed inset-0 bg-black/40 z-40" onclick="closeDrawer()"></div>
+
+<!-- Mobile Drawer -->
+<div id="mobileDrawer" class="drawer fixed left-0 top-0 bottom-0 w-64 bg-white z-50 shadow-lg">
+  <div class="h-16 flex items-center px-4 border-b border-border">
+    <span class="text-xl font-semibold text-primary"><i class="fas fa-glass-water mr-2"></i>牛奶品质分级</span>
+  </div>
+  <nav class="py-2">
+    <a href="#" onclick="switchPage('predict');closeDrawer();return false;" class="sider-item flex items-center px-4 py-3 text-sm font-medium" id="nav-predict-m">
+      <i class="fas fa-flask w-6 text-center mr-2"></i>品质分级
+    </a>
+    <a href="#" onclick="switchPage('history');closeDrawer();return false;" class="sider-item flex items-center px-4 py-3 text-sm font-medium" id="nav-history-m">
+      <i class="fas fa-clock-rotate-left w-6 text-center mr-2"></i>历史记录
+    </a>
+    <a href="#" onclick="switchPage('indicators');closeDrawer();return false;" class="sider-item flex items-center px-4 py-3 text-sm font-medium" id="nav-indicators-m">
+      <i class="fas fa-circle-info w-6 text-center mr-2"></i>指标说明
+    </a>
+  </nav>
+</div>
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-border z-30 flex items-center justify-between px-4 lg:px-6">
+  <div class="flex items-center">
+    <button class="header-hamburger mr-3 w-10 h-10 flex items-center justify-center rounded-lg hover:bg-bg-page" onclick="openDrawer()">
+      <i class="fas fa-bars text-text-secondary text-lg"></i>
+    </button>
+    <span class="text-xl font-semibold text-primary"><i class="fas fa-glass-water mr-2"></i>牛奶品质分级</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <span id="userDisplay" class="text-sm text-text-secondary hidden items-center gap-2">
+      <i class="fas fa-user-circle text-text-tertiary"></i><span id="userName">testuser</span>
+    </span>
+    <button id="loginBtn" onclick="switchPage('login')" class="px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors">
+      登录
+    </button>
+    <button id="logoutBtn" onclick="logout()" class="px-4 py-2 text-sm font-medium text-text-secondary hidden hover:text-error transition-colors">
+      <i class="fas fa-right-from-bracket mr-1"></i>退出
+    </button>
+  </div>
+</header>
+
+<!-- Layout -->
+<div class="flex pt-16 min-h-screen">
+  <!-- Sider Desktop -->
+  <aside class="sider-desktop fixed left-0 top-16 bottom-0 w-[200px] bg-white border-r border-border z-20">
+    <nav class="py-2">
+      <a href="#" onclick="switchPage('predict');return false;" class="sider-item active flex items-center px-4 py-3 text-sm font-medium" id="nav-predict">
+        <i class="fas fa-flask w-6 text-center mr-2"></i>品质分级
+      </a>
+      <a href="#" onclick="switchPage('history');return false;" class="sider-item flex items-center px-4 py-3 text-sm font-medium" id="nav-history">
+        <i class="fas fa-clock-rotate-left w-6 text-center mr-2"></i>历史记录
+      </a>
+      <a href="#" onclick="switchPage('indicators');return false;" class="sider-item flex items-center px-4 py-3 text-sm font-medium" id="nav-indicators">
+        <i class="fas fa-circle-info w-6 text-center mr-2"></i>指标说明
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="content-area flex-1 ml-0 md:ml-[200px] p-4 lg:p-6">
+    <div class="max-w-[1200px] mx-auto">
+
+      <!-- ==================== LOGIN PAGE ==================== -->
+      <div id="page-login" class="hidden">
+        <div class="min-h-[70vh] flex items-center justify-center">
+          <div class="w-full max-w-md">
+            <div class="text-center mb-8">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <i class="fas fa-glass-water text-primary text-3xl"></i>
+              </div>
+              <h1 class="text-[28px] font-semibold text-text-primary">牛奶品质分级系统</h1>
+              <p class="text-sm text-text-secondary mt-2">基于 XGBoost 的牛奶品质智能分级平台</p>
+            </div>
+            <div class="bg-white rounded-xl border border-border p-6 lg:p-8">
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-text-primary mb-1.5">用户名</label>
+                <div class="relative">
+                  <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-sm"></i>
+                  <input type="text" id="loginUsername" placeholder="请输入用户名" value="testuser" class="w-full h-10 pl-9 pr-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="block text-sm font-medium text-text-primary mb-1.5">密码</label>
+                <div class="relative">
+                  <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-sm"></i>
+                  <input type="password" id="loginPassword" placeholder="请输入密码" value="password" class="w-full h-10 pl-9 pr-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                </div>
+              </div>
+              <p class="text-xs text-text-tertiary mb-6">测试账号：testuser / password</p>
+              <button onclick="doLogin()" id="loginSubmitBtn" class="btn-primary w-full h-10 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark">
+                登录
+              </button>
+              <p class="mt-4 text-center text-xs text-text-secondary">
+                还没有账号？<a href="#" onclick="switchPage('register');return false;" class="text-primary hover:underline">去注册</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== REGISTER PAGE ==================== -->
+      <div id="page-register" class="hidden">
+        <div class="min-h-[70vh] flex items-center justify-center">
+          <div class="w-full max-w-md">
+            <div class="text-center mb-8">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <i class="fas fa-glass-water text-primary text-3xl"></i>
+              </div>
+              <h1 class="text-[28px] font-semibold text-text-primary">注册账号</h1>
+            </div>
+            <div class="bg-white rounded-xl border border-border p-6 lg:p-8">
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-text-primary mb-1.5">用户名</label>
+                <input type="text" id="regUsername" placeholder="3-50 个字符" class="w-full h-10 px-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                <p id="regUsernameErr" class="text-xs text-error mt-1 hidden">用户名至少需要 3 个字符</p>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-text-primary mb-1.5">密码</label>
+                <input type="password" id="regPassword" placeholder="至少 6 个字符" class="w-full h-10 px-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                <p id="regPasswordErr" class="text-xs text-error mt-1 hidden">密码至少需要 6 个字符</p>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-text-primary mb-1.5">确认密码</label>
+                <input type="password" id="regConfirm" placeholder="再次输入密码" class="w-full h-10 px-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                <p id="regConfirmErr" class="text-xs text-error mt-1 hidden">两次输入的密码不一致</p>
+              </div>
+              <div class="mb-6">
+                <label class="block text-sm font-medium text-text-secondary mb-1.5">邮箱（选填）</label>
+                <input type="email" id="regEmail" placeholder="your@email.com" class="w-full h-10 px-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+              </div>
+              <button onclick="doRegister()" class="btn-primary w-full h-10 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark">
+                注册
+              </button>
+              <p class="mt-4 text-center text-xs text-text-secondary">
+                已有账号？<a href="#" onclick="switchPage('login');return false;" class="text-primary hover:underline">去登录</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PREDICT PAGE ==================== -->
+      <div id="page-predict">
+        <!-- Tabs -->
+        <div class="flex border-b border-border mb-6">
+          <button onclick="switchTab('single')" id="tab-single" class="tab-btn active px-4 py-3 text-sm font-medium">单条录入</button>
+          <button onclick="switchTab('batch')" id="tab-batch" class="tab-btn px-4 py-3 text-sm font-medium">CSV 批量</button>
+          <button onclick="switchTab('model')" id="tab-model" class="tab-btn px-4 py-3 text-sm font-medium">模型与特征</button>
+        </div>
+
+        <!-- Tab: Single -->
+        <div id="panel-single">
+          <!-- Quick Fill -->
+          <div class="bg-white rounded-xl border border-border p-4 mb-4 card-hover">
+            <p class="text-sm font-medium text-text-primary mb-3"><i class="fas fa-bolt text-warning mr-2"></i>快速测试场景</p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="fillScenario('high')" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-success/30 text-success bg-success/5 hover:bg-success/10 transition-colors">
+                <i class="fas fa-check mr-1"></i>优质牛奶（全好）
+              </button>
+              <button onclick="fillScenario('medium')" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-warning/30 text-warning bg-warning/5 hover:bg-warning/10 transition-colors">
+                <i class="fas fa-minus mr-1"></i>一般品质（混合）
+              </button>
+              <button onclick="fillScenario('low')" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-error/30 text-error bg-error/5 hover:bg-error/10 transition-colors">
+                <i class="fas fa-xmark mr-1"></i>劣质牛奶（全差）
+              </button>
+              <button onclick="fillScenario('default')" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-border text-text-secondary bg-bg-page hover:bg-bg-page/80 transition-colors">
+                <i class="fas fa-rotate-left mr-1"></i>恢复默认
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-border p-6 lg:p-8 card-hover mb-6">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-xl font-semibold text-text-primary mb-1">录入牛奶理化指标</h2>
+                <p class="text-sm text-text-secondary">填写以下 7 项指标，系统将自动判定品质等级</p>
+              </div>
+              <button onclick="resetForm()" class="text-xs text-text-tertiary hover:text-text-primary transition-colors">
+                <i class="fas fa-rotate-left mr-1"></i>重置
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+              <!-- pH -->
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-1.5">pH 值 <span class="text-text-tertiary font-normal">(0-14)</span></label>
+                <input type="number" id="ph" min="0" max="14" step="0.1" value="6.6" oninput="validateField(this, 0, 14)" class="w-full h-10 px-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                <p id="phErr" class="text-xs text-error mt-1 hidden">pH 值应在 0-14 之间</p>
+                <p class="text-xs text-text-tertiary mt-1">正常范围约 6.25-6.90</p>
+              </div>
+              <!-- Temperature -->
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-1.5">温度 <span class="text-text-tertiary font-normal">(°C, 0-100)</span></label>
+                <input type="number" id="temperature" min="0" max="100" step="0.1" value="35" oninput="validateField(this, 0, 100)" class="w-full h-10 px-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                <p id="temperatureErr" class="text-xs text-error mt-1 hidden">温度应在 0-100°C 之间</p>
+              </div>
+              <!-- Taste -->
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-1.5">口感</label>
+                <div class="flex gap-2" id="tasteGroup">
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'taste')">
+                    <input type="radio" name="taste" value="1" checked class="sr-only">
+                    <span class="text-sm"><i class="fas fa-check mr-1 text-success"></i>好</span>
+                  </label>
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'taste')">
+                    <input type="radio" name="taste" value="0" class="sr-only">
+                    <span class="text-sm"><i class="fas fa-xmark mr-1 text-error"></i>差</span>
+                  </label>
+                </div>
+              </div>
+              <!-- Odor -->
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-1.5">气味</label>
+                <div class="flex gap-2" id="odorGroup">
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'odor')">
+                    <input type="radio" name="odor" value="1" class="sr-only">
+                    <span class="text-sm"><i class="fas fa-check mr-1 text-success"></i>好</span>
+                  </label>
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'odor')">
+                    <input type="radio" name="odor" value="0" checked class="sr-only">
+                    <span class="text-sm"><i class="fas fa-xmark mr-1 text-error"></i>差</span>
+                  </label>
+                </div>
+              </div>
+              <!-- Fat -->
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-1.5">脂肪含量</label>
+                <div class="flex gap-2" id="fatGroup">
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'fat')">
+                    <input type="radio" name="fat" value="1" checked class="sr-only">
+                    <span class="text-sm"><i class="fas fa-arrow-up mr-1 text-success"></i>高</span>
+                  </label>
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'fat')">
+                    <input type="radio" name="fat" value="0" class="sr-only">
+                    <span class="text-sm"><i class="fas fa-arrow-down mr-1 text-error"></i>低</span>
+                  </label>
+                </div>
+              </div>
+              <!-- Turbidity -->
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-1.5">浑浊度</label>
+                <div class="flex gap-2" id="turbidityGroup">
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'turbidity')">
+                    <input type="radio" name="turbidity" value="1" checked class="sr-only">
+                    <span class="text-sm"><i class="fas fa-arrow-up mr-1 text-success"></i>高</span>
+                  </label>
+                  <label class="radio-card flex-1 flex items-center justify-center h-10 border border-border rounded-lg cursor-pointer transition-all" onclick="selectRadio(this, 'turbidity')">
+                    <input type="radio" name="turbidity" value="0" class="sr-only">
+                    <span class="text-sm"><i class="fas fa-arrow-down mr-1 text-error"></i>低</span>
+                  </label>
+                </div>
+              </div>
+              <!-- Colour -->
+              <div class="md:col-span-2 lg:col-span-1">
+                <label class="block text-sm font-medium text-text-primary mb-1.5">颜色 <span class="text-text-tertiary font-normal">(240-255)</span></label>
+                <input type="number" id="colour" min="0" max="255" step="1" value="255" oninput="validateField(this, 0, 255)" class="w-full h-10 px-3 text-sm border border-border rounded-lg focus:border-primary transition-colors">
+                <p id="colourErr" class="text-xs text-error mt-1 hidden">颜色值应在 0-255 之间</p>
+                <p class="text-xs text-text-tertiary mt-1">数值越高颜色越浅</p>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <button onclick="doPredict()" id="predictBtn" class="btn-primary h-10 px-8 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark">
+                <i class="fas fa-wand-magic-sparkles mr-2"></i>开始分级
+              </button>
+            </div>
+          </div>
+
+          <!-- Result Card -->
+          <div id="resultCard" class="hidden">
+            <div class="bg-white rounded-xl border border-border p-6 lg:p-8 result-card">
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-text-primary">分级结果</h2>
+                <div class="flex gap-2">
+                  <button onclick="saveToHistory()" class="text-xs text-primary hover:text-primary-dark transition-colors px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/5">
+                    <i class="fas fa-bookmark mr-1"></i>保存到历史
+                  </button>
+                  <button onclick="document.getElementById('resultCard').classList.add('hidden')" class="text-xs text-text-tertiary hover:text-text-secondary transition-colors px-2 py-1.5">
+                    <i class="fas fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-6 mb-6">
+                <div>
+                  <p class="text-xs text-text-secondary mb-1">预测等级</p>
+                  <span id="resultGrade" class="inline-block px-4 py-2 text-2xl font-bold rounded-md bg-success/10 text-success">high</span>
+                </div>
+                <div>
+                  <p class="text-xs text-text-secondary mb-1">置信度</p>
+                  <p id="resultConfidence" class="text-[32px] font-semibold text-text-primary">99.9%</p>
+                </div>
+              </div>
+              <p id="resultDesc" class="text-sm text-text-secondary mb-6">该牛奶品质评定为「优」，模型置信度极高</p>
+
+              <!-- Score Breakdown -->
+              <div class="bg-bg-page rounded-lg p-4 mb-6">
+                <p class="text-sm font-medium text-text-primary mb-3"><i class="fas fa-chart-bar text-primary mr-2"></i>各指标贡献度</p>
+                <div id="scoreBreakdown" class="space-y-3">
+                  <!-- Dynamically filled -->
+                </div>
+                <div class="mt-3 pt-3 border-t border-border flex justify-between text-sm">
+                  <span class="text-text-secondary">综合得分</span>
+                  <span id="totalScore" class="font-semibold text-text-primary">8.0</span>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <p class="text-sm font-medium text-text-primary">各类概率：</p>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm text-text-secondary w-16">low</span>
+                    <span id="probLowText" class="text-sm text-text-secondary">0.03%</span>
+                  </div>
+                  <div class="h-2 bg-bg-page rounded-full overflow-hidden">
+                    <div id="probLowBar" class="progress-bar h-full bg-error rounded-full" style="width:0.03%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm text-text-secondary w-16">medium</span>
+                    <span id="probMediumText" class="text-sm text-text-secondary">0.04%</span>
+                  </div>
+                  <div class="h-2 bg-bg-page rounded-full overflow-hidden">
+                    <div id="probMediumBar" class="progress-bar h-full bg-warning rounded-full" style="width:0.04%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm text-text-secondary w-16">high</span>
+                    <span id="probHighText" class="text-sm text-text-secondary">99.93%</span>
+                  </div>
+                  <div class="h-2 bg-bg-page rounded-full overflow-hidden">
+                    <div id="probHighBar" class="progress-bar h-full bg-success rounded-full" style="width:99.93%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Batch -->
+        <div id="panel-batch" class="hidden">
+          <div class="bg-white rounded-xl border border-border p-6 lg:p-8 card-hover mb-6">
+            <h2 class="text-xl font-semibold text-text-primary mb-1">CSV 批量预测</h2>
+            <p class="text-sm text-text-secondary mb-6">上传包含 7 项指标的 CSV 文件，支持列名大小写/拼写容错</p>
+
+            <div id="uploadArea" class="border-2 border-dashed border-border rounded-xl p-8 lg:p-12 text-center cursor-pointer hover:border-primary transition-colors" onclick="document.getElementById('csvFile').click()">
+              <i class="fas fa-cloud-arrow-up text-5xl text-text-tertiary mb-4"></i>
+              <p class="text-sm text-text-primary font-medium mb-1">点击或拖拽文件至此上传</p>
+              <p class="text-xs text-text-tertiary">支持 .csv，单个文件不超过 5MB</p>
+              <input type="file" id="csvFile" accept=".csv" class="hidden" onchange="handleFileSelect(this)">
+            </div>
+
+            <div id="fileInfo" class="hidden mt-4 flex items-center gap-3 p-3 bg-bg-page rounded-lg">
+              <i class="fas fa-file-csv text-primary text-lg"></i>
+              <span id="fileName" class="text-sm text-text-primary flex-1">test_batch.csv</span>
+              <button onclick="clearFile()" class="text-text-tertiary hover:text-error transition-colors"><i class="fas fa-xmark"></i></button>
+            </div>
+
+            <div class="mt-6">
+              <button onclick="doBatchPredict()" id="batchBtn" class="btn-primary h-10 px-8 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark">
+                <i class="fas fa-wand-magic-sparkles mr-2"></i>开始批量分级
+              </button>
+            </div>
+          </div>
+
+          <!-- Batch Results -->
+          <div id="batchResult" class="hidden">
+            <div class="bg-white rounded-xl border border-border p-6 lg:p-8">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-text-primary">批量结果（共 3 条）</h2>
+                <button onclick="exportBatchResult()" class="text-xs text-primary hover:text-primary-dark transition-colors px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/5">
+                  <i class="fas fa-download mr-1"></i>导出结果
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-border">
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">行号</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">pH</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">温度</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">口感</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">气味</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">脂肪</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">浑浊</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">颜色</th>
+                      <th class="text-left py-2 pr-4 font-medium text-text-secondary">等级</th>
+                      <th class="text-left py-2 font-medium text-text-secondary">置信度</th>
+                    </tr>
+                  </thead>
+                  <tbody id="batchTableBody">
+                    <tr class="border-b border-border/50">
+                      <td class="py-2.5 pr-4">3</td>
+                      <td class="py-2.5 pr-4">6.6</td>
+                      <td class="py-2.5 pr-4">35</td>
+                      <td class="py-2.5 pr-4">好</td>
+                      <td class="py-2.5 pr-4">差</td>
+                      <td class="py-2.5 pr-4">高</td>
+                      <td class="py-2.5 pr-4">高</td>
+                      <td class="py-2.5 pr-4">255</td>
+                      <td class="py-2.5 pr-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-success/10 text-success">high</span></td>
+                      <td class="py-2.5">99.9%</td>
+                    </tr>
+                    <tr class="border-b border-border/50">
+                      <td class="py-2.5 pr-4">4</td>
+                      <td class="py-2.5 pr-4">6.5</td>
+                      <td class="py-2.5 pr-4">38</td>
+                      <td class="py-2.5 pr-4">好</td>
+                      <td class="py-2.5 pr-4">好</td>
+                      <td class="py-2.5 pr-4">高</td>
+                      <td class="py-2.5 pr-4">低</td>
+                      <td class="py-2.5 pr-4">250</td>
+                      <td class="py-2.5 pr-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-warning/10 text-warning">medium</span></td>
+                      <td class="py-2.5">87.2%</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2.5 pr-4">5</td>
+                      <td class="py-2.5 pr-4">6.7</td>
+                      <td class="py-2.5 pr-4">34</td>
+                      <td class="py-2.5 pr-4">好</td>
+                      <td class="py-2.5 pr-4">差</td>
+                      <td class="py-2.5 pr-4">高</td>
+                      <td class="py-2.5 pr-4">高</td>
+                      <td class="py-2.5 pr-4">255</td>
+                      <td class="py-2.5 pr-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-success/10 text-success">high</span></td>
+                      <td class="py-2.5">99.1%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Model -->
+        <div id="panel-model" class="hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Performance Stats -->
+            <div class="lg:col-span-1 space-y-4">
+              <div class="bg-white rounded-xl border border-border p-6 card-hover">
+                <p class="text-xs text-text-secondary mb-1">测试集准确率</p>
+                <p class="text-[32px] font-semibold text-text-primary">100.0%</p>
+                <p class="text-xs text-success mt-1"><i class="fas fa-check-circle mr-1"></i>超过目标 85%</p>
+              </div>
+              <div class="bg-white rounded-xl border border-border p-6 card-hover">
+                <p class="text-xs text-text-secondary mb-1">宏平均 F1</p>
+                <p class="text-[32px] font-semibold text-text-primary">1.000</p>
+                <p class="text-xs text-success mt-1"><i class="fas fa-check-circle mr-1"></i>超过目标 0.80</p>
+              </div>
+              <div class="bg-white rounded-xl border border-border p-6 card-hover">
+                <p class="text-xs text-text-secondary mb-3">各类别 F1</p>
+                <div class="space-y-2">
+                  <div class="flex justify-between text-sm"><span class="text-text-secondary">low</span><span class="font-medium">1.00</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-text-secondary">medium</span><span class="font-medium">1.00</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-text-secondary">high</span><span class="font-medium">1.00</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feature Importance Chart -->
+            <div class="lg:col-span-2 bg-white rounded-xl border border-border p-6 card-hover">
+              <h3 class="text-base font-semibold text-text-primary mb-4">特征重要性</h3>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-sm mb-1"><span class="text-text-secondary">Turbidity（浑浊度）</span><span class="font-medium">27.4%</span></div>
+                  <div class="h-3 bg-bg-page rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full" style="width:27.4%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1"><span class="text-text-secondary">pH 值</span><span class="font-medium">20.0%</span></div>
+                  <div class="h-3 bg-bg-page rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full" style="width:20%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1"><span class="text-text-secondary">Fat（脂肪）</span><span class="font-medium">17.7%</span></div>
+                  <div class="h-3 bg-bg-page rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full" style="width:17.7%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1"><span class="text-text-secondary">Temperature（温度）</span><span class="font-medium">14.9%</span></div>
+                  <div class="h-3 bg-bg-page rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full" style="width:14.9%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1"><span class="text-text-secondary">Odor（气味）</span><span class="font-medium">8.4%</span></div>
+                  <div class="h-3 bg-bg-page rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full" style="width:8.4%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1"><span class="text-text-secondary">Taste（口感）</span><span class="font-medium">7.3%</span></div>
+                  <div class="h-3 bg-bg-page rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full" style="width:7.3%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1"><span class="text-text-secondary">Colour（颜色）</span><span class="font-medium">4.4%</span></div>
+                  <div class="h-3 bg-bg-page rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full" style="width:4.4%"></div></div>
+                </div>
+              </div>
+              <p class="text-xs text-text-tertiary mt-4"><i class="fas fa-circle-info mr-1"></i>特征重要性基于 XGBoost 模型的 gain 计算</p>
+            </div>
+          </div>
+
+          <!-- Model Params -->
+          <div class="mt-6 bg-white rounded-xl border border-border p-6 card-hover">
+            <h3 class="text-base font-semibold text-text-primary mb-4">模型参数</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div><span class="text-text-secondary">类型：</span><span class="font-medium">XGBoost Pipeline</span></div>
+              <div><span class="text-text-secondary">样本量：</span><span class="font-medium">1059</span></div>
+              <div><span class="text-text-secondary">训练集/测试集：</span><span class="font-medium">8:1:1</span></div>
+              <div><span class="text-text-secondary">交叉验证：</span><span class="font-medium">5-Fold</span></div>
+              <div><span class="text-text-secondary">max_depth：</span><span class="font-medium">3</span></div>
+              <div><span class="text-text-secondary">learning_rate：</span><span class="font-medium">0.2</span></div>
+              <div><span class="text-text-secondary">n_estimators：</span><span class="font-medium">300</span></div>
+              <div><span class="text-text-secondary">subsample：</span><span class="font-medium">0.8</span></div>
+              <div><span class="text-text-secondary">colsample_bytree：</span><span class="font-medium">0.8</span></div>
+              <div><span class="text-text-secondary">class_weight：</span><span class="font-medium">balanced</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== HISTORY PAGE ==================== -->
+      <div id="page-history" class="hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-[28px] font-semibold text-text-primary">历史记录</h1>
+          <button onclick="exportHistory()" class="h-10 px-4 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors">
+            <i class="fas fa-download mr-2"></i>导出 CSV
+          </button>
+        </div>
+
+        <!-- Empty State -->
+        <div id="historyEmpty" class="hidden">
+          <div class="bg-white rounded-xl border border-border p-12 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-bg-page flex items-center justify-center">
+              <i class="fas fa-clock-rotate-left text-3xl text-text-tertiary"></i>
+            </div>
+            <h3 class="text-base font-medium text-text-primary mb-2">暂无历史记录</h3>
+            <p class="text-sm text-text-secondary mb-6">登录后进行分级预测，记录将自动保存到这里</p>
+            <button onclick="switchPage('predict')" class="px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors">
+              去分级
+            </button>
+          </div>
+        </div>
+
+        <!-- History Content -->
+        <div id="historyContent">
+          <p class="text-sm text-text-secondary mb-4">共 <span id="historyCount">12</span> 条记录</p>
+
+          <div class="bg-white rounded-xl border border-border overflow-hidden card-hover">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-border bg-bg-page/50">
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">时间</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">pH</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">温度</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">口感</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">气味</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">脂肪</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">浑浊</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">颜色</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">等级</th>
+                    <th class="text-left py-3 px-4 font-medium text-text-secondary">置信度</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                  <tr class="border-b border-border/50">
+                    <td class="py-3 px-4 text-text-secondary">2026-10-19 14:30</td>
+                    <td class="py-3 px-4">6.6</td>
+                    <td class="py-3 px-4">35</td>
+                    <td class="py-3 px-4">好</td>
+                    <td class="py-3 px-4">差</td>
+                    <td class="py-3 px-4">高</td>
+                    <td class="py-3 px-4">高</td>
+                    <td class="py-3 px-4">255</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-success/10 text-success">high</span></td>
+                    <td class="py-3 px-4">99.9%</td>
+                  </tr>
+                  <tr class="border-b border-border/50">
+                    <td class="py-3 px-4 text-text-secondary">2026-10-19 14:28</td>
+                    <td class="py-3 px-4">6.5</td>
+                    <td class="py-3 px-4">38</td>
+                    <td class="py-3 px-4">好</td>
+                    <td class="py-3 px-4">好</td>
+                    <td class="py-3 px-4">高</td>
+                    <td class="py-3 px-4">低</td>
+                    <td class="py-3 px-4">250</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-warning/10 text-warning">medium</span></td>
+                    <td class="py-3 px-4">87.2%</td>
+                  </tr>
+                  <tr class="border-b border-border/50">
+                    <td class="py-3 px-4 text-text-secondary">2026-10-19 14:25</td>
+                    <td class="py-3 px-4">6.7</td>
+                    <td class="py-3 px-4">34</td>
+                    <td class="py-3 px-4">差</td>
+                    <td class="py-3 px-4">差</td>
+                    <td class="py-3 px-4">低</td>
+                    <td class="py-3 px-4">低</td>
+                    <td class="py-3 px-4">245</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-error/10 text-error">low</span></td>
+                    <td class="py-3 px-4">95.1%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex justify-center mt-6">
+            <div class="flex items-center gap-1">
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-border text-text-secondary hover:bg-bg-page transition-colors"><i class="fas fa-chevron-left text-xs"></i></button>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-sm font-medium">1</button>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-border text-text-secondary hover:bg-bg-page text-sm transition-colors">2</button>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-border text-text-secondary hover:bg-bg-page text-sm transition-colors">3</button>
+              <span class="px-1 text-text-tertiary">...</span>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-border text-text-secondary hover:bg-bg-page text-sm transition-colors">10</button>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-border text-text-secondary hover:bg-bg-page transition-colors"><i class="fas fa-chevron-right text-xs"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== INDICATORS PAGE ==================== -->
+      <div id="page-indicators" class="hidden">
+        <h1 class="text-[28px] font-semibold text-text-primary mb-6">指标说明</h1>
+
+        <!-- Disclaimer -->
+        <div class="bg-warning/5 border border-warning/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+          <i class="fas fa-triangle-exclamation text-warning mt-0.5"></i>
+          <div>
+            <p class="text-sm text-warning font-medium">免责声明</p>
+            <p class="text-sm text-warning/80 mt-1">本系统结果仅供品质初筛参考，不替代实验室食品安全检测。最终收购决策应结合专业检测意见。</p>
+          </div>
+        </div>
+
+        <!-- Indicator Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl border border-border p-5 card-hover border-l-4 border-l-primary">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-medium text-text-primary mb-2">pH 值</h3>
+                <p class="text-sm text-text-secondary mb-1">取值范围：<span class="font-medium text-text-primary">3.0 – 9.5</span></p>
+                <p class="text-xs text-text-tertiary">牛奶酸碱度，正常范围约 6.25–6.90</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">连续</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-border p-5 card-hover border-l-4 border-l-primary">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-medium text-text-primary mb-2">温度</h3>
+                <p class="text-sm text-text-secondary mb-1">取值范围：<span class="font-medium text-text-primary">34 – 90 °C</span></p>
+                <p class="text-xs text-text-tertiary">牛奶温度，单位摄氏度</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">连续</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-border p-5 card-hover border-l-4 border-l-primary">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-medium text-text-primary mb-2">口感</h3>
+                <p class="text-sm text-text-secondary mb-1">取值范围：<span class="font-medium text-text-primary">0 = 差 / 1 = 好</span></p>
+                <p class="text-xs text-text-tertiary">口感品质标志，好为最优条件</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-1 rounded bg-warning/10 text-warning">离散</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-border p-5 card-hover border-l-4 border-l-primary">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-medium text-text-primary mb-2">气味</h3>
+                <p class="text-sm text-text-secondary mb-1">取值范围：<span class="font-medium text-text-primary">0 = 差 / 1 = 好</span></p>
+                <p class="text-xs text-text-tertiary">气味品质标志，好为最优条件</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-1 rounded bg-warning/10 text-warning">离散</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-border p-5 card-hover border-l-4 border-l-primary">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-medium text-text-primary mb-2">脂肪含量</h3>
+                <p class="text-sm text-text-secondary mb-1">取值范围：<span class="font-medium text-text-primary">0 = 低 / 1 = 高</span></p>
+                <p class="text-xs text-text-tertiary">脂肪含量等级标志</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-1 rounded bg-warning/10 text-warning">离散</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-border p-5 card-hover border-l-4 border-l-primary">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-medium text-text-primary mb-2">浑浊度</h3>
+                <p class="text-sm text-text-secondary mb-1">取值范围：<span class="font-medium text-text-primary">0 = 低 / 1 = 高</span></p>
+                <p class="text-xs text-text-tertiary">浑浊度等级标志，对分级影响最大</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-1 rounded bg-warning/10 text-warning">离散</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-border p-5 card-hover border-l-4 border-l-primary md:col-span-2">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-medium text-text-primary mb-2">颜色</h3>
+                <p class="text-sm text-text-secondary mb-1">取值范围：<span class="font-medium text-text-primary">240 – 255</span></p>
+                <p class="text-xs text-text-tertiary">牛奶颜色值，数值越高颜色越浅</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">连续</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ==================== STATE ====================
+let currentPage = 'predict';
+let currentTab = 'single';
+let isLoggedIn = false;
+let currentUser = null;
+let lastResult = null;
+
+// ==================== TOAST ====================
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const icon = type === 'success' ? 'fa-check-circle text-success' : type === 'error' ? 'fa-circle-xmark text-error' : 'fa-triangle-exclamation text-warning';
+  toast.innerHTML = '<i class="fas ' + icon + '"></i><span>' + message + '</span>';
+  container.appendChild(toast);
+  setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000);
+}
+
+// ==================== NAVIGATION ====================
+function switchPage(page) {
+  document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.remove('hidden');
+
+  document.querySelectorAll('.sider-item').forEach(el => el.classList.remove('active'));
+  const nav = document.getElementById('nav-' + page);
+  if (nav) nav.classList.add('active');
+  const navM = document.getElementById('nav-' + page + '-m');
+  if (navM) navM.classList.add('active');
+
+  currentPage = page;
+  window.scrollTo(0, 0);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('[id^="panel-"]').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById('panel-' + tab);
+  if (target) target.classList.remove('hidden');
+
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  const btn = document.getElementById('tab-' + tab);
+  if (btn) btn.classList.add('active');
+
+  currentTab = tab;
+}
+
+// ==================== DRAWER ====================
+function openDrawer() {
+  document.getElementById('mobileDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+
+// ==================== AUTH ====================
+function doLogin() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!username) { showToast('请输入用户名', 'error'); return; }
+  if (!password) { showToast('请输入密码', 'error'); return; }
+
+  const btn = document.getElementById('loginSubmitBtn');
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>登录中...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    isLoggedIn = true;
+    currentUser = username;
+    updateAuthUI();
+    switchPage('predict');
+    showToast('登录成功，欢迎 ' + username);
+    btn.innerHTML = '登录';
+    btn.disabled = false;
+  }, 800);
+}
+
+function doRegister() {
+  const username = document.getElementById('regUsername').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirm = document.getElementById('regConfirm').value;
+
+  let valid = true;
+  if (!username || username.length < 3) { document.getElementById('regUsernameErr').classList.remove('hidden'); valid = false; } else { document.getElementById('regUsernameErr').classList.add('hidden'); }
+  if (!password || password.length < 6) { document.getElementById('regPasswordErr').classList.remove('hidden'); valid = false; } else { document.getElementById('regPasswordErr').classList.add('hidden'); }
+  if (password !== confirm) { document.getElementById('regConfirmErr').classList.remove('hidden'); valid = false; } else { document.getElementById('regConfirmErr').classList.add('hidden'); }
+
+  if (!valid) return;
+
+  showToast('注册成功！请登录');
+  switchPage('login');
+}
+
+function logout() {
+  isLoggedIn = false;
+  currentUser = null;
+  updateAuthUI();
+  switchPage('login');
+  showToast('已退出登录');
+}
+
+function updateAuthUI() {
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const userDisplay = document.getElementById('userDisplay');
+  const userName = document.getElementById('userName');
+
+  if (isLoggedIn) {
+    loginBtn.classList.add('hidden');
+    logoutBtn.classList.remove('hidden');
+    userDisplay.classList.remove('hidden');
+    userDisplay.classList.add('flex');
+    userName.textContent = currentUser;
+  } else {
+    loginBtn.classList.remove('hidden');
+    logoutBtn.classList.add('hidden');
+    userDisplay.classList.add('hidden');
+    userDisplay.classList.remove('flex');
+  }
+}
+
+// ==================== FORM HELPERS ====================
+function selectRadio(label, groupName) {
+  document.querySelectorAll('#' + groupName + 'Group .radio-card').forEach(el => el.classList.remove('selected'));
+  label.classList.add('selected');
+}
+
+function validateField(input, min, max) {
+  const val = parseFloat(input.value);
+  const errEl = document.getElementById(input.id + 'Err');
+  if (isNaN(val) || val < min || val > max) {
+    input.classList.add('error');
+    if (errEl) errEl.classList.remove('hidden');
+    return false;
+  } else {
+    input.classList.remove('error');
+    if (errEl) errEl.classList.add('hidden');
+    return true;
+  }
+}
+
+function resetForm() {
+  document.getElementById('ph').value = '6.6';
+  document.getElementById('temperature').value = '35';
+  document.getElementById('colour').value = '255';
+
+  setRadio('taste', '1');
+  setRadio('odor', '0');
+  setRadio('fat', '1');
+  setRadio('turbidity', '1');
+
+  document.querySelectorAll('input.error').forEach(el => el.classList.remove('error'));
+  document.querySelectorAll('[id$="Err"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById('resultCard').classList.add('hidden');
+
+  showToast('表单已重置');
+}
+
+function setRadio(name, value) {
+  const radios = document.querySelectorAll('input[name="' + name + '"]');
+  radios.forEach(r => {
+    r.checked = r.value === value;
+    const card = r.closest('.radio-card');
+    if (card) {
+      if (r.checked) card.classList.add('selected');
+      else card.classList.remove('selected');
+    }
+  });
+}
+
+function fillScenario(type) {
+  if (type === 'high') {
+    document.getElementById('ph').value = '6.6';
+    document.getElementById('temperature').value = '35';
+    document.getElementById('colour').value = '255';
+    setRadio('taste', '1');
+    setRadio('odor', '1');
+    setRadio('fat', '1');
+    setRadio('turbidity', '1');
+    showToast('已填入「优质牛奶」测试数据');
+  } else if (type === 'medium') {
+    document.getElementById('ph').value = '6.5';
+    document.getElementById('temperature').value = '50';
+    document.getElementById('colour').value = '250';
+    setRadio('taste', '1');
+    setRadio('odor', '0');
+    setRadio('fat', '1');
+    setRadio('turbidity', '0');
+    showToast('已填入「一般品质」测试数据');
+  } else if (type === 'low') {
+    document.getElementById('ph').value = '3.0';
+    document.getElementById('temperature').value = '90';
+    document.getElementById('colour').value = '240';
+    setRadio('taste', '0');
+    setRadio('odor', '0');
+    setRadio('fat', '0');
+    setRadio('turbidity', '0');
+    showToast('已填入「劣质牛奶」测试数据');
+  } else {
+    resetForm();
+  }
+}
+
+// ==================== PREDICT ====================
+function calculateGrade(inputs) {
+  const { ph, temperature, taste, odor, fat, turbidity, colour } = inputs;
+
+  // 评分逻辑（与真实 XGBoost 特征重要性一致）
+  // 调整了权重和阈值，让「差」更容易得到 low 结果
+  let score = 0;
+  const details = [];
+
+  // Turbidity (权重最高): 高(1)=+3, 低(0)=-4
+  const turbidityScore = turbidity == 1 ? 3 : -4;
+  score += turbidityScore;
+  details.push({ name: '浑浊度', score: turbidityScore, weight: '最高' });
+
+  // pH: 越接近 6.6 越好
+  const phDiff = Math.abs(ph - 6.6);
+  const phScore = phDiff < 0.3 ? 3 : phDiff < 0.6 ? 1.5 : phDiff < 1.5 ? -1.5 : -3.5;
+  score += phScore;
+  details.push({ name: 'pH 值', score: phScore, weight: '高' });
+
+  // Fat: 高(1)=+2, 低(0)=-2.5
+  const fatScore = fat == 1 ? 2 : -2.5;
+  score += fatScore;
+  details.push({ name: '脂肪含量', score: fatScore, weight: '高' });
+
+  // Temperature: 越接近 35 越好
+  const tempDiff = Math.abs(temperature - 35);
+  const tempScore = tempDiff < 3 ? 2 : tempDiff < 6 ? 1 : tempDiff < 15 ? -2 : -3.5;
+  score += tempScore;
+  details.push({ name: '温度', score: tempScore, weight: '中' });
+
+  // Odor: 好(1)=+1.5, 差(0)=-2
+  const odorScore = odor == 1 ? 1.5 : -2;
+  score += odorScore;
+  details.push({ name: '气味', score: odorScore, weight: '中' });
+
+  // Taste: 好(1)=+1, 差(0)=-1.5
+  const tasteScore = taste == 1 ? 1 : -1.5;
+  score += tasteScore;
+  details.push({ name: '口感', score: tasteScore, weight: '低' });
+
+  // Colour: 越接近 255 越好
+  const colourScore = colour >= 250 ? 0.5 : colour >= 245 ? 0 : -0.5;
+  score += colourScore;
+  details.push({ name: '颜色', score: colourScore, weight: '最低' });
+
+  // 多数差惩罚：如果 taste/odor/fat/turbidity 中差的数量 >= 3，额外扣分
+  let badCount = 0;
+  if (taste == 0) badCount++;
+  if (odor == 0) badCount++;
+  if (fat == 0) badCount++;
+  if (turbidity == 0) badCount++;
+  if (badCount >= 3) {
+    const penalty = -1.5 * (badCount - 2);
+    score += penalty;
+    details.push({ name: '多差惩罚', score: penalty, weight: '调整' });
+  }
+
+  // 判定阈值（调整让「差」更容易得到 low）
+  // high: score >= 4, medium: -3 <= score < 4, low: score < -3
+  let grade, confidence, probs;
+  if (score >= 4) {
+    grade = 'high';
+    confidence = Math.min(99.9, 75 + score * 3);
+    probs = {
+      low: Math.max(0.01, (5 - score) * 1.2),
+      medium: Math.max(0.01, (7 - score) * 0.8),
+      high: confidence
+    };
+  } else if (score >= -3) {
+    grade = 'medium';
+    confidence = Math.min(92, 50 + Math.abs(score) * 5);
+    probs = {
+      low: Math.max(0.5, (1 - score) * 3),
+      medium: confidence,
+      high: Math.max(0.5, (score + 3) * 3)
+    };
+  } else {
+    grade = 'low';
+    confidence = Math.min(99.5, 70 + Math.abs(score) * 2.5);
+    probs = {
+      low: confidence,
+      medium: Math.max(0.1, (score + 5) * 1.5),
+      high: Math.max(0.01, (score + 7) * 0.5)
+    };
+  }
+
+  // 归一化到和为 100
+  const total = probs.low + probs.medium + probs.high;
+  probs.low = (probs.low / total) * 100;
+  probs.medium = (probs.medium / total) * 100;
+  probs.high = (probs.high / total) * 100;
+
+  return { grade, confidence: parseFloat(confidence.toFixed(1)), probs, score: parseFloat(score.toFixed(1)), details };
+}
+
+function doPredict() {
+  // 验证所有字段
+  const valid = [
+    validateField(document.getElementById('ph'), 0, 14),
+    validateField(document.getElementById('temperature'), 0, 100),
+    validateField(document.getElementById('colour'), 0, 255)
+  ];
+  if (!valid.every(v => v)) {
+    showToast('请检查输入值是否在有效范围内', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('predictBtn');
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>分析中...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const inputs = {
+      ph: parseFloat(document.getElementById('ph').value) || 6.6,
+      temperature: parseFloat(document.getElementById('temperature').value) || 35,
+      taste: parseInt(document.querySelector('input[name="taste"]:checked')?.value ?? '1'),
+      odor: parseInt(document.querySelector('input[name="odor"]:checked')?.value ?? '0'),
+      fat: parseInt(document.querySelector('input[name="fat"]:checked')?.value ?? '1'),
+      turbidity: parseInt(document.querySelector('input[name="turbidity"]:checked')?.value ?? '1'),
+      colour: parseInt(document.getElementById('colour').value) || 255,
+    };
+
+    const result = calculateGrade(inputs);
+    lastResult = result;
+
+    // Update result card
+    const gradeEl = document.getElementById('resultGrade');
+    gradeEl.textContent = gradeLabel(result.grade);
+    gradeEl.className = 'inline-block px-4 py-2 text-2xl font-bold rounded-md ' +
+      (result.grade === 'high' ? 'bg-success/10 text-success' :
+       result.grade === 'medium' ? 'bg-warning/10 text-warning' :
+       'bg-error/10 text-error');
+
+    document.getElementById('resultConfidence').textContent = result.confidence.toFixed(1) + '%';
+    document.getElementById('resultDesc').textContent =
+      result.grade === 'high' ? '该牛奶品质评定为「优」，模型置信度极高' :
+      result.grade === 'medium' ? '该牛奶品质评定为「一般」，建议进一步检测' :
+      '该牛奶品质评定为「差」，不建议收购';
+
+    document.getElementById('probLowText').textContent = result.probs.low.toFixed(2) + '%';
+    document.getElementById('probLowBar').style.width = result.probs.low + '%';
+    document.getElementById('probMediumText').textContent = result.probs.medium.toFixed(2) + '%';
+    document.getElementById('probMediumBar').style.width = result.probs.medium + '%';
+    document.getElementById('probHighText').textContent = result.probs.high.toFixed(2) + '%';
+    document.getElementById('probHighBar').style.width = result.probs.high + '%';
+
+    // Score breakdown
+    const breakdownEl = document.getElementById('scoreBreakdown');
+    breakdownEl.innerHTML = result.details.map(d => {
+      const color = d.score > 0 ? 'bg-success' : d.score < 0 ? 'bg-error' : 'bg-text-tertiary';
+      const pct = Math.min(100, Math.abs(d.score) / 4 * 100);
+      return '<div class="flex items-center gap-3">' +
+        '<span class="text-xs text-text-secondary w-16 shrink-0">' + d.name + '</span>' +
+        '<div class="flex-1 score-bar"><div class="score-bar-fill ' + color + '" style="width:' + pct + '%"></div></div>' +
+        '<span class="text-xs font-medium w-12 text-right ' + (d.score > 0 ? 'text-success' : d.score < 0 ? 'text-error' : 'text-text-tertiary') + '">' + (d.score > 0 ? '+' : '') + d.score + '</span>' +
+        '</div>';
+    }).join('');
+    document.getElementById('totalScore').textContent = result.score;
+    document.getElementById('totalScore').className = 'font-semibold ' + (result.score > 0 ? 'text-success' : result.score < 0 ? 'text-error' : 'text-text-primary');
+
+    // Show result
+    document.getElementById('resultCard').classList.remove('hidden');
+
+    // Reset button
+    btn.innerHTML = '<i class="fas fa-wand-magic-sparkles mr-2"></i>开始分级';
+    btn.disabled = false;
+
+    // Auto scroll to result
+    setTimeout(() => {
+      document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }, 600);
+}
+
+function gradeLabel(grade) {
+  return grade === 'high' ? '优' : grade === 'medium' ? '一般' : '差';
+}
+
+function saveToHistory() {
+  if (!isLoggedIn) {
+    showToast('请先登录再保存记录', 'warning');
+    setTimeout(() => switchPage('login'), 500);
+    return;
+  }
+  showToast('已保存到历史记录');
+}
+
+// ==================== BATCH ====================
+function handleFileSelect(input) {
+  if (input.files && input.files[0]) {
+    document.getElementById('fileName').textContent = input.files[0].name;
+    document.getElementById('fileInfo').classList.remove('hidden');
+  }
+}
+
+function clearFile() {
+  document.getElementById('csvFile').value = '';
+  document.getElementById('fileInfo').classList.add('hidden');
+}
+
+function doBatchPredict() {
+  const btn = document.getElementById('batchBtn');
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>分析中...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    document.getElementById('batchResult').classList.remove('hidden');
+    btn.innerHTML = '<i class="fas fa-wand-magic-sparkles mr-2"></i>开始批量分级';
+    btn.disabled = false;
+    showToast('批量分析完成，共 3 条记录');
+    setTimeout(() => {
+      document.getElementById('batchResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }, 800);
+}
+
+function exportBatchResult() {
+  showToast('结果已导出为 CSV');
+}
+
+// ==================== HISTORY ====================
+function exportHistory() {
+  showToast('历史记录已导出为 CSV');
+}
+
+// ==================== INIT ====================
+// Initialize radio card styles
+document.querySelectorAll('.radio-card input:checked').forEach(input => {
+  const card = input.closest('.radio-card');
+  if (card) card.classList.add('selected');
+});
+
+// Set default active nav
+switchPage('predict');
+</script>
+
+</body>
+</html>
